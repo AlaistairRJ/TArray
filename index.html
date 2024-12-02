@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Sorteio - Super Mundial 2025</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .grupos {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .grupo {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #000;
+            width: 22%;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .grupo h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .grupo ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .grupo li {
+            font-size: 14px;
+            list-style-type: none;
+        }
+        #sorteioBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #resultado {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Bruninho e Simões - Super Mundial 2025</h1>
+    <p>Clique no botão abaixo para sortear os times e preencher os grupos!</p>
+
+    <button id="sorteioBtn">Sortear Times para os Grupos</button>
+
+    <div id="resultado" class="grupos"></div>
+
+    <script>
+        // Dados dos potes
+        const potes = {
+            1: ['Manchester City', 'Real Madrid', 'Bayern de Munique', 'PSG', 'Flamengo', 'Palmeiras', 'River Plate', 'Fluminense'],
+            2: ['Chelsea', 'Borussia Dortmund', 'Inter de Milão', 'Porto', 'Atlético de Madrid', 'Benfica', 'Juventus', 'RB Salzburg'],
+            3: ['Al Hilal', 'Ulsan HD', 'Al Ahly', 'Wydad Casablanca', 'Monterrey', 'León', 'Boca Juniors', 'Botafogo'],
+            4: ['Urawa Red Diamonds', 'Al Ain', 'Espérance de Tunis', 'Mamelodi Sundowns', 'Pachuca', 'Seattle Sounders', 'Auckland City', 'Inter Miami']
+        };
+
+        const grupos = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        let gruposDivididos = { 'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': [] };
+        let poteIndex = 1; // Começa com o Pote 1
+        let grupoIndex = 0; // Começa com o Grupo A
+
+        // Função para adicionar um time ao grupo
+        document.getElementById('sorteioBtn').addEventListener('click', adicionarTimeAoGrupo);
+
+        function adicionarTimeAoGrupo() {
+            if (poteIndex > 4) {
+                alert('Todos os times foram sorteados!');
+                return;
+            }
+
+            const pote = potes[poteIndex];
+            if (pote.length === 0) {
+                poteIndex++;
+                return; // Pote vazio, vai para o próximo pote
+            }
+
+            // Sorteia um time do pote
+            const time = sorteiaTime(pote);
+
+            // Adiciona o time ao grupo
+            gruposDivididos[grupos[grupoIndex]].push(time);
+
+            // Exibe os grupos
+            exibirGrupos();
+
+            // Passa para o próximo grupo e pote
+            grupoIndex++;
+            if (grupoIndex === grupos.length) {
+                grupoIndex = 0;
+                poteIndex++; // Vai para o próximo pote
+            }
+        }
+
+        // Função para sortear um time do pote
+        function sorteiaTime(pote) {
+            const randomIndex = Math.floor(Math.random() * pote.length);
+            const time = pote[randomIndex];
+
+            // Remove o time sorteado do pote
+            potes[poteIndex] = potes[poteIndex].filter(t => t !== time);
+            return time;
+        }
+
+        // Função para exibir os grupos
+        function exibirGrupos() {
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = ''; // Limpa o conteúdo anterior
+
+            // Exibe os grupos com os times
+            for (let grupo in gruposDivididos) {
+                let grupoElement = document.createElement('div');
+                grupoElement.classList.add('grupo');
+                grupoElement.innerHTML = `<h3>Grupo ${grupo}</h3><ul>`;
+                
+                gruposDivididos[grupo].forEach(time => {
+                    grupoElement.innerHTML += `<li>${time}</li>`;
+                });
+
+                grupoElement.innerHTML += '</ul>';
+                resultadoDiv.appendChild(grupoElement);
+            }
+        }
+
+    </script>
+
+</body>
+</html>
